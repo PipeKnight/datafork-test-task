@@ -4,7 +4,7 @@ Test task for DataFork company
 
 Example of usage:
 
-`python3 "C:\Users\PipeK\Desktop\datafork_test_task\__init__.py" -v -g -c "CAPITAL ONE FINANCIAL CORPORATION" "BANK OF AMERICA, NATIONAL ASSOCIATION"`
+`python3 "C:\Users\PipeKnight\Desktop\datafork_test_task\__init__.py" -v -g -c "CAPITAL ONE FINANCIAL CORPORATION" "BANK OF AMERICA, NATIONAL ASSOCIATION"`
 
 
 Result:
