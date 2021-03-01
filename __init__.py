@@ -256,7 +256,18 @@ def download_chunk_from_api(session=None,
         timeout=timeout
     )
     logging.info('Data collected with url: {}'.format(request.url))
-    return request.json()
+
+    try:
+        json_data = request.json()
+    except:
+        sleep_time = 10
+        logging.info('error when parsing json from api')
+        logging.info('will sleep for {} seconds and try again'.format(sleep_time))
+        time.sleep(sleep_time)
+        json_data = download_chunk_from_api(session, timeout, l_date, r_date,
+                                            sort='created_date_desc', **kwargs)
+
+    return json_data
 
 
 def check_data(json_data, raise_error=False):
@@ -337,9 +348,15 @@ def store_data(dbcon,
                         :min(
                             len(deleted_ids), 50)]))
 
+            already_deleted = psql.read_sql('''
+                            SELECT _id
+                            FROM %s
+                            WHERE date_received IS null
+                        ''' % (AsIs(quote_ident(tablename, dbcur))), dbcon)
+
             updated_rows = df_data.loc[df_data['_id'].isin(updated_ids)]
             deleted_rows = existing_data.loc[existing_data['_id'].isin(
-                deleted_ids)].copy()
+                deleted_ids) & ~existing_data['_id'].isin(already_deleted['_id'])].copy()
             deleted_rows = deleted_rows.assign(**{col: None for col in deleted_rows if col not in
                                                   ['_id', 'complaint_id', 'update_stamp']})
             deleted_rows['update_stamp'] = dt.datetime.now()
