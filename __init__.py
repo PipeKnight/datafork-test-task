@@ -363,7 +363,7 @@ def store_data(dbcon,
             deleted_rows = deleted_rows.drop_duplicates(ignore_index=True)
             added_rows = df_data.loc[df_data['_id'].isin(added_ids)]
 
-            stored_data = dict()
+            stored_data = {}
             stored_data.update(store_data(
                 dbcon,
                 updated_rows,
@@ -404,11 +404,11 @@ def draw_graph(plot, x, y, X, title, **kwargs):
     xmax += (dt.timedelta(days=1) if isinstance(xmax, dt.date) else 1)
     plot.set_ylim(0, round((max(y) + 1) * 1.1))
     plot.set_xlim(xmin, xmax)
-    plot.set_xticks([i for i in daterange(xmin, xmax, 1
+    plot.set_xticks(list(daterange(xmin, xmax, 1
                     if (xmax - xmin) <= dt.timedelta(days=DAYS_IN_MONTH)
-                    else 2 * DAYS_IN_MONTH)])
+                    else 2 * DAYS_IN_MONTH)))
     plot.tick_params(axis='x', rotation=90)
-    plot.grid() 
+    plot.grid()
     plot.plot(x, y, **kwargs)
 
 
@@ -432,7 +432,7 @@ def draw_counting_graph(data, path=None, graphtype=0, labels=None, separate_plot
         filename = 'compare_{}_and_{}_graph.png'
     else:
         return
-    
+
     label1 = labels[0]
     label2 = labels[1]
     data1 = data.get(label1)
@@ -453,8 +453,7 @@ def draw_counting_graph(data, path=None, graphtype=0, labels=None, separate_plot
         x2 = [i[0] for i in points]
         y2 = [i[1] for i in points]
 
-    x = x1 + x2
-    if x:
+    if x := x1 + x2:
         draw_graph(plt1, x1, y1, x, '{} elements'.format(label1.upper()), color='b')
         draw_graph(plt2, x2, y2, x, '{} elements'.format(label2.upper()), color='r')
         if graphtype == 'countgraph':
